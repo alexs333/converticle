@@ -10,7 +10,7 @@
 	let inputFormat: Format = 'markdown';
 	let outputFormat: Format = 'html';
 	let isClient = false;
-	let showPreview = true;
+	let showPreview = false;
 	let theme: 'light' | 'dark' = 'light';
 	let copied = false; // UI state for copy confirmation
 
