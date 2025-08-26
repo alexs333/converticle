@@ -34,16 +34,16 @@
 	}
 
 	:root[data-theme="dark"] {
-		/* Dark theme complementary palette */
-		--gradient-start: #1e3a8a; /* blue-800 */
-		--gradient-end: #3b82f6;   /* blue-500 */
-		--accent: #60a5fa;         /* blue-400 */
-		--surface: rgba(15,23,42,0.78); /* slate-900 w/ alpha */
-		--surface-alt: rgba(30,41,59,0.55); /* slate-800 */
-		--border: rgba(96,165,250,0.28);
-		--text-primary: #f1f5f9;
-		--text-secondary: #cbd5e1;
-		--shadow-lg: 0 8px 28px -4px rgba(0,0,0,0.55), 0 4px 14px -2px rgba(0,0,0,0.4);
+		/* Classic dark theme */
+		--gradient-start: #1f2937; /* gray-800 */
+		--gradient-end: #111827;   /* gray-900 */
+		--accent: #6b7280;         /* gray-500 */
+		--surface: rgba(31,41,55,0.85); /* gray-800 w/ alpha */
+		--surface-alt: rgba(17,24,39,0.75); /* gray-900 */
+		--border: rgba(107,114,128,0.3);
+		--text-primary: #f9fafb;
+		--text-secondary: #d1d5db;
+		--shadow-lg: 0 8px 28px -4px rgba(0,0,0,0.7), 0 4px 14px -2px rgba(0,0,0,0.5);
 	}
 
 	:global(body) {

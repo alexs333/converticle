@@ -245,9 +245,9 @@
 	:global(html) { height:100%; }
 
 	.container {
-		max-width: 1200px;
+		max-width: 1600px;
 		margin: 0 auto;
-		padding: 2rem;
+		padding: 1.5rem;
 		height: 100dvh; /* Fill viewport without causing overflow from padding */
 		box-sizing: border-box; /* Include padding in height calculation */
 		display: flex;
