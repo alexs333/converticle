@@ -146,8 +146,64 @@
 </script>
 
 <svelte:head>
-	<title>Converticle - Text Format Converter</title>
-	<meta name="description" content="Convert between Markdown, HTML, and Slack mrkdwn formats" />
+	<title>Converticle - Free Online Text Format Converter | Markdown ⇆ HTML ⇆ Slack</title>
+	<meta name="description" content="Convert text between Markdown, HTML, and Slack mrkdwn formats instantly. Free online converter with live preview, copy/paste, and download features. Perfect for developers and content creators." />
+	<meta name="keywords" content="markdown converter, html converter, slack mrkdwn, text format converter, markdown to html, html to markdown, online converter, free tool" />
+	<meta name="author" content="Converticle" />
+	<meta name="robots" content="index, follow" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="canonical" href="https://converticle.com" />
+	
+	<!-- Open Graph / Facebook -->
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content="https://converticle.com" />
+	<meta property="og:title" content="Converticle - Free Online Text Format Converter" />
+	<meta property="og:description" content="Convert text between Markdown, HTML, and Slack mrkdwn formats instantly. Free online converter with live preview and download features." />
+	<meta property="og:image" content="https://converticle.com/og-image.png" />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
+	<meta property="og:site_name" content="Converticle" />
+	
+	<!-- Twitter -->
+	<meta property="twitter:card" content="summary_large_image" />
+	<meta property="twitter:url" content="https://converticle.com" />
+	<meta property="twitter:title" content="Converticle - Free Online Text Format Converter" />
+	<meta property="twitter:description" content="Convert text between Markdown, HTML, and Slack mrkdwn formats instantly. Free online converter with live preview." />
+	<meta property="twitter:image" content="https://converticle.com/og-image.png" />
+	
+	<!-- Additional SEO -->
+	<meta name="theme-color" content="#2563eb" />
+	<meta name="application-name" content="Converticle" />
+	<meta name="apple-mobile-web-app-title" content="Converticle" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+	
+	<!-- Structured Data -->
+	<script type="application/ld+json">
+		{
+			"@context": "https://schema.org",
+			"@type": "WebApplication",
+			"name": "Converticle",
+			"description": "Convert text between Markdown, HTML, and Slack mrkdwn formats instantly",
+			"url": "https://converticle.com",
+			"applicationCategory": "DeveloperApplication",
+			"operatingSystem": "Any",
+			"offers": {
+				"@type": "Offer",
+				"price": "0",
+				"priceCurrency": "USD"
+			},
+			"featureList": [
+				"Convert Markdown to HTML",
+				"Convert HTML to Markdown", 
+				"Convert to/from Slack mrkdwn format",
+				"Live preview",
+				"Copy to clipboard",
+				"Download converted files",
+				"Dark/Light theme support"
+			]
+		}
+	</script>
 </svelte:head>
 
 <main class="container" data-theme={theme}>
@@ -156,10 +212,10 @@
 			<h1 aria-label="Converticle - Text Format Converter">
 				<span class="logo">🔁</span> Converticle
 			</h1>
-			<p class="tagline">Markdown ⇆ HTML ⇆ Slack mrkdwn</p>
+			<p class="tagline">Convert between Markdown, HTML, and Slack mrkdwn formats</p>
 		</div>
 		<div class="header-actions">
-			<button class="ghost" on:click={toggleTheme} aria-label="Toggle color theme" title="Toggle light / dark">{theme === 'light' ? '🌙' : '☀️'}</button>
+			<button class="ghost" on:click={() => toggleTheme()} aria-label="Toggle color theme" title="Toggle light / dark">{theme === 'light' ? '🌙' : '☀️'}</button>
 			<a href="https://github.com/" target="_blank" rel="noopener" class="ghost" aria-label="GitHub repository" title="GitHub">
 				<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12 .5C5.648.5.5 5.648.5 12c0 5.086 3.292 9.385 7.865 10.905.575.103.785-.25.785-.557 0-.275-.01-1.003-.015-1.97-3.199.695-3.875-1.542-3.875-1.542-.523-1.33-1.278-1.684-1.278-1.684-1.044-.714.079-.699.079-.699 1.155.082 1.764 1.187 1.764 1.187 1.027 1.76 2.695 1.252 3.352.957.103-.744.402-1.253.732-1.54-2.554-.291-5.238-1.277-5.238-5.683 0-1.255.45-2.282 1.186-3.087-.119-.29-.514-1.46.112-3.046 0 0 .966-.309 3.166 1.18a11.02 11.02 0 0 1 2.883-.388c.978.005 1.963.133 2.883.388 2.2-1.489 3.164-1.18 3.164-1.18.628 1.586.233 2.756.114 3.046.738.805 1.184 1.832 1.184 3.087 0 4.417-2.688 5.387-5.252 5.673.414.355.78 1.057.78 2.132 0 1.54-.014 2.78-.014 3.158 0 .309.208.666.79.556C20.213 21.382 23.5 17.084 23.5 12 23.5 5.648 18.352.5 12 .5Z"/></svg>
 			</a>
@@ -237,6 +293,14 @@
 			</div>
 		</div>
 	</div>
+	
+	<footer class="app-footer">
+		<section class="feature-description">
+			<h2>About Converticle</h2>
+			<p>Converticle is a free online text format converter that helps developers and content creators convert between popular markup formats. Whether you need to convert Markdown to HTML for web publishing, HTML to Markdown for documentation, or work with Slack's mrkdwn format, Converticle provides instant, accurate conversions with live preview capabilities.</p>
+		</section>
+	</footer>
+	
 	<div class="sr-only" aria-live="polite">{statusMessage}</div>
 </main>
 
@@ -331,6 +395,11 @@
 	.text-area::-webkit-scrollbar-thumb, .preview::-webkit-scrollbar-thumb { background:linear-gradient(var(--gradient-start),var(--gradient-end)); border-radius:4px; }
 	.text-area::-webkit-scrollbar-thumb:hover, .preview::-webkit-scrollbar-thumb:hover { filter:brightness(1.15); }
 	.sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
+	
+	.app-footer { margin-top: 2rem; padding: 1.5rem 0; }
+	.feature-description { max-width: 800px; margin: 0 auto; text-align: center; }
+	.feature-description h2 { font-size: 1.5rem; margin-bottom: 1rem; color: var(--text-primary); font-weight: 600; }
+	.feature-description p { color: var(--text-secondary); line-height: 1.6; font-size: 0.95rem; }
 
 	@media (max-width: 900px) { .converter { grid-template-columns:1fr; } .conversion-controls { order:-1; } }
 	@media (max-width: 600px) { .branding h1 { font-size:1.6rem; } .tagline { display:none; } }
