@@ -216,7 +216,7 @@
 		</div>
 		<div class="header-actions">
 			<button class="ghost" on:click={() => toggleTheme()} aria-label="Toggle color theme" title="Toggle light / dark">{theme === 'light' ? '🌙' : '☀️'}</button>
-			<a href="https://github.com/" target="_blank" rel="noopener" class="ghost" aria-label="GitHub repository" title="GitHub">
+			<a href="https://github.com/alexs333/converticle/issues/" target="_blank" rel="noopener" class="ghost" aria-label="GitHub repository" title="GitHub">
 				<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12 .5C5.648.5.5 5.648.5 12c0 5.086 3.292 9.385 7.865 10.905.575.103.785-.25.785-.557 0-.275-.01-1.003-.015-1.97-3.199.695-3.875-1.542-3.875-1.542-.523-1.33-1.278-1.684-1.278-1.684-1.044-.714.079-.699.079-.699 1.155.082 1.764 1.187 1.764 1.187 1.027 1.76 2.695 1.252 3.352.957.103-.744.402-1.253.732-1.54-2.554-.291-5.238-1.277-5.238-5.683 0-1.255.45-2.282 1.186-3.087-.119-.29-.514-1.46.112-3.046 0 0 .966-.309 3.166 1.18a11.02 11.02 0 0 1 2.883-.388c.978.005 1.963.133 2.883.388 2.2-1.489 3.164-1.18 3.164-1.18.628 1.586.233 2.756.114 3.046.738.805 1.184 1.832 1.184 3.087 0 4.417-2.688 5.387-5.252 5.673.414.355.78 1.057.78 2.132 0 1.54-.014 2.78-.014 3.158 0 .309.208.666.79.556C20.213 21.382 23.5 17.084 23.5 12 23.5 5.648 18.352.5 12 .5Z"/></svg>
 			</a>
 		</div>
