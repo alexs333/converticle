@@ -7,6 +7,7 @@
 <svelte:head>
 	<link rel="icon" href={favicon} />
 	<meta name="color-scheme" content="light dark" />
+	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9859754269579381" crossorigin="anonymous"></script>
 </svelte:head>
 
 {@render children?.()}
