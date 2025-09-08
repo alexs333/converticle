@@ -297,7 +297,7 @@
 	<footer class="app-footer">
 		<section class="feature-description">
 			<h2>About Converticle</h2>
-			<p>Converticle is a free online text format converter that helps developers and content creators convert between popular markup formats. Whether you need to convert Markdown to HTML for web publishing, HTML to Markdown for documentation, or work with Slack's mrkdwn format, Converticle provides instant, accurate conversions with live preview capabilities.</p>
+			<p>A free converter for Markdown, HTML, and mrkdwn (Slack) formats with live preview.</p>
 		</section>
 	</footer>
 	
@@ -396,10 +396,10 @@
 	.text-area::-webkit-scrollbar-thumb:hover, .preview::-webkit-scrollbar-thumb:hover { filter:brightness(1.15); }
 	.sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
 	
-	.app-footer { margin-top: 2rem; padding: 1.5rem 0; }
-	.feature-description { max-width: 800px; margin: 0 auto; text-align: center; }
-	.feature-description h2 { font-size: 1.5rem; margin-bottom: 1rem; color: var(--text-primary); font-weight: 600; }
-	.feature-description p { color: var(--text-secondary); line-height: 1.6; font-size: 0.95rem; }
+	.app-footer { margin-top: 1rem; padding: 0.75rem 0; }
+	.feature-description { max-width: 600px; margin: 0 auto; text-align: center; }
+	.feature-description h2 { font-size: 1.2rem; margin-bottom: 0.5rem; color: var(--text-primary); font-weight: 600; }
+	.feature-description p { color: var(--text-secondary); line-height: 1.4; font-size: 0.85rem; }
 
 	@media (max-width: 900px) { .converter { grid-template-columns:1fr; } .conversion-controls { order:-1; } }
 	@media (max-width: 600px) { .branding h1 { font-size:1.6rem; } .tagline { display:none; } }
