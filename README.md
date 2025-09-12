@@ -17,6 +17,14 @@ A modern, web-based tool to convert between Markdown, HTML, and Slack mrkdwn for
 - **HTML** - Clean HTML output with sanitization  
 - **mrkdwn** - Slack's lightweight markup format
 
+## Format Documentation
+
+For detailed syntax and formatting rules, refer to the official documentation:
+
+- **Markdown**: [CommonMark Spec](https://spec.commonmark.org/) | [GitHub Flavored Markdown](https://github.github.com/gfm/) | [Markdown Guide](https://www.markdownguide.org/)
+- **HTML**: [MDN HTML Documentation](https://developer.mozilla.org/en-US/docs/Web/HTML) | [HTML Living Standard](https://html.spec.whatwg.org/)
+- **Slack mrkdwn**: [Slack Formatting Documentation](https://api.slack.com/reference/surfaces/formatting) | [Slack Text Formatting Guide](https://slack.com/help/articles/202288908-Format-your-messages)
+
 ## Quick Start
 
 ```sh

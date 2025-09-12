@@ -3,6 +3,10 @@
 	import { browser } from '$app/environment';
 	import { tick } from 'svelte';
 
+	// Format Documentation:
+	// Markdown: https://spec.commonmark.org/ | https://github.github.com/gfm/
+	// HTML: https://developer.mozilla.org/en-US/docs/Web/HTML | https://html.spec.whatwg.org/
+	// Slack mrkdwn: https://api.slack.com/reference/surfaces/formatting
 	type Format = 'markdown' | 'html' | 'mrkdwn';
 
 	let inputText = '# Hello World\n\nThis is **bold** text and *italic* text.\n\n- List item 1\n- List item 2\n\n[Link to Google](https://google.com)';
@@ -25,6 +29,10 @@
 	onMount(async () => {
 		if (browser) {
 			// Dynamic imports for client-side only
+			// HTML processing libraries documentation:
+			// Marked (Markdown parser): https://marked.js.org/
+			// DOMPurify (HTML sanitizer): https://github.com/cure53/DOMPurify
+			// TurndownService (HTML to Markdown): https://github.com/mixmark-io/turndown
 			const markedModule = await import('marked');
 			marked = markedModule.marked;
 			
@@ -75,6 +83,9 @@
 		}
 	}
 
+	// Markdown to Slack mrkdwn conversion
+	// Markdown spec: https://spec.commonmark.org/
+	// Slack mrkdwn spec: https://api.slack.com/reference/surfaces/formatting
 	function markdownToMrkdwn(md: string): string {
 		return md
 			.replace(/^#{6}\s+(.+)$/gm, '$1')
@@ -94,6 +105,9 @@
 			.replace(/^\d+\.\s+(.+)$/gm, '1. $1');
 	}
 
+	// Slack mrkdwn to Markdown conversion
+	// Slack mrkdwn spec: https://api.slack.com/reference/surfaces/formatting
+	// Markdown spec: https://spec.commonmark.org/
 	function mrkdwnToMarkdown(mrkdwn: string): string {
 		return mrkdwn
 			.replace(/\*([^*]+)\*/g, '**$1**')
@@ -298,6 +312,15 @@
 		<section class="feature-description">
 			<h2>About Converticle</h2>
 			<p>A free converter for Markdown, HTML, and mrkdwn (Slack) formats with live preview.</p>
+			
+			<div class="format-links">
+				<span class="docs-label">Format Docs:</span>
+				<span class="docs-links">
+					<strong>Markdown</strong> <a href="https://www.markdownguide.org/" target="_blank" rel="noopener">Guide</a> <a href="https://spec.commonmark.org/" target="_blank" rel="noopener">Spec</a>
+					• <strong>HTML</strong> <a href="https://developer.mozilla.org/en-US/docs/Web/HTML" target="_blank" rel="noopener">MDN</a> <a href="https://html.spec.whatwg.org/" target="_blank" rel="noopener">Standard</a>
+					• <strong>Slack mrkdwn</strong> <a href="https://api.slack.com/reference/surfaces/formatting" target="_blank" rel="noopener">Formatting</a> <a href="https://slack.com/help/articles/202288908-Format-your-messages" target="_blank" rel="noopener">Help</a>
+				</span>
+			</div>
 		</section>
 	</footer>
 	
@@ -400,6 +423,12 @@
 	.feature-description { max-width: 600px; margin: 0 auto; text-align: center; }
 	.feature-description h2 { font-size: 1.2rem; margin-bottom: 0.5rem; color: var(--text-primary); font-weight: 600; }
 	.feature-description p { color: var(--text-secondary); line-height: 1.4; font-size: 0.85rem; }
+	
+	.format-links { margin-top: 1rem; font-size: 0.75rem; color: var(--text-secondary); }
+	.docs-label { font-weight: 600; margin-right: 0.5rem; }
+	.docs-links strong { color: var(--text-primary); font-weight: 600; margin-right: 0.25rem; }
+	.docs-links a { color: var(--text-primary); text-decoration: underline; margin-right: 0.5rem; }
+	.docs-links a:hover { opacity: 0.8; }
 
 	@media (max-width: 900px) { .converter { grid-template-columns:1fr; } .conversion-controls { order:-1; } }
 	@media (max-width: 600px) { .branding h1 { font-size:1.6rem; } .tagline { display:none; } }
