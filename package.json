@@ -24,6 +24,7 @@
 		"vite": "^7.0.4"
 	},
 	"dependencies": {
+		"@asciidoctor/core": "^3.0.4",
 		"dompurify": "^3.2.6",
 		"highlight.js": "^11.11.1",
 		"marked": "^16.2.0",

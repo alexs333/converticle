@@ -7,7 +7,8 @@
 	// Markdown: https://spec.commonmark.org/ | https://github.github.com/gfm/
 	// HTML: https://developer.mozilla.org/en-US/docs/Web/HTML | https://html.spec.whatwg.org/
 	// Slack mrkdwn: https://api.slack.com/reference/surfaces/formatting
-	type Format = 'markdown' | 'html' | 'mrkdwn';
+	// AsciiDoc: https://asciidoc.org/ | https://docs.asciidoctor.org/
+	type Format = 'markdown' | 'html' | 'mrkdwn' | 'asciidoc';
 
 	let inputText = '# Hello World\n\nThis is **bold** text and *italic* text.\n\n- List item 1\n- List item 2\n\n[Link to Google](https://google.com)';
 	let outputText = '';
@@ -25,6 +26,7 @@
 	let DOMPurify: any;
 	let TurndownService: any;
 	let turndownService: any;
+	let Asciidoctor: any;
 
 	onMount(async () => {
 		if (browser) {
@@ -33,6 +35,7 @@
 			// Marked (Markdown parser): https://marked.js.org/
 			// DOMPurify (HTML sanitizer): https://github.com/cure53/DOMPurify
 			// TurndownService (HTML to Markdown): https://github.com/mixmark-io/turndown
+			// Asciidoctor (AsciiDoc processor): https://docs.asciidoctor.org/asciidoctor.js/
 			const markedModule = await import('marked');
 			marked = markedModule.marked;
 			
@@ -43,6 +46,9 @@
 			TurndownService = turndownModule.default;
 			turndownService = new TurndownService();
 			
+			const asciidoctorModule = await import('@asciidoctor/core');
+			Asciidoctor = asciidoctorModule.default();
+			
 			isClient = true;
 			convert();
 			// restore theme preference
@@ -52,7 +58,7 @@
 	});
 
 	function convert() {
-		if (!isClient || !inputText.trim() || !marked || !DOMPurify || !turndownService) {
+		if (!isClient || !inputText.trim() || !marked || !DOMPurify || !turndownService || !Asciidoctor) {
 			outputText = '';
 			return;
 		}
@@ -77,6 +83,23 @@
 			} else if (inputFormat === 'mrkdwn' && outputFormat === 'html') {
 				const mdContent = mrkdwnToMarkdown(inputText);
 				outputText = DOMPurify.sanitize(marked(mdContent));
+			} else if (inputFormat === 'asciidoc' && outputFormat === 'html') {
+				outputText = DOMPurify.sanitize(Asciidoctor.convert(inputText));
+			} else if (inputFormat === 'html' && outputFormat === 'asciidoc') {
+				const mdContent = turndownService.turndown(inputText);
+				outputText = markdownToAsciidoc(mdContent);
+			} else if (inputFormat === 'markdown' && outputFormat === 'asciidoc') {
+				outputText = markdownToAsciidoc(inputText);
+			} else if (inputFormat === 'asciidoc' && outputFormat === 'markdown') {
+				const htmlContent = Asciidoctor.convert(inputText);
+				outputText = turndownService.turndown(htmlContent);
+			} else if (inputFormat === 'asciidoc' && outputFormat === 'mrkdwn') {
+				const htmlContent = Asciidoctor.convert(inputText);
+				const mdContent = turndownService.turndown(htmlContent);
+				outputText = markdownToMrkdwn(mdContent);
+			} else if (inputFormat === 'mrkdwn' && outputFormat === 'asciidoc') {
+				const mdContent = mrkdwnToMarkdown(inputText);
+				outputText = markdownToAsciidoc(mdContent);
 			}
 		} catch (error) {
 			outputText = 'Error converting: ' + (error as Error).message;
@@ -118,6 +141,30 @@
 			.replace(/^1\.\s+(.+)$/gm, '1. $1');
 	}
 
+	// Markdown to AsciiDoc conversion
+	// Markdown spec: https://spec.commonmark.org/
+	// AsciiDoc spec: https://asciidoc.org/
+	function markdownToAsciidoc(md: string): string {
+		return md
+			.replace(/^#{6}\s+(.+)$/gm, '====== $1')
+			.replace(/^#{5}\s+(.+)$/gm, '===== $1')
+			.replace(/^#{4}\s+(.+)$/gm, '==== $1')
+			.replace(/^#{3}\s+(.+)$/gm, '=== $1')
+			.replace(/^#{2}\s+(.+)$/gm, '== $1')
+			.replace(/^#{1}\s+(.+)$/gm, '= $1')
+			.replace(/\*\*(.*?)\*\*/g, '*$1*')
+			.replace(/__(.*?)__/g, '*$1*')
+			.replace(/\*(.*?)\*/g, '_$1_')
+			.replace(/_(.*?)_/g, '_$1_')
+			.replace(/~~(.*?)~~/g, '[line-through]#$1#')
+			.replace(/`([^`]+)`/g, '`$1`')
+			.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$2[$1]')
+			.replace(/^[-*+]\s+(.+)$/gm, '* $1')
+			.replace(/^\d+\.\s+(.+)$/gm, '. $1')
+			.replace(/^>\s+(.+)$/gm, '____\n$1\n____')
+			.replace(/^```(\w*)\n([\s\S]*?)\n```$/gm, '[source,$1]\n----\n$2\n----');
+	}
+
 	function copyToClipboard() {
 		navigator.clipboard.writeText(outputText).then(() => {
 			announce('Output copied to clipboard');
@@ -131,7 +178,7 @@
 		const url = URL.createObjectURL(blob);
 		const a = document.createElement('a');
 		a.href = url;
-		a.download = `converted.${outputFormat === 'mrkdwn' ? 'txt' : outputFormat}`;
+		a.download = `converted.${outputFormat === 'mrkdwn' ? 'txt' : outputFormat === 'asciidoc' ? 'adoc' : outputFormat}`;
 		a.click();
 		URL.revokeObjectURL(url);
 		announce('Download started');
@@ -154,15 +201,15 @@
 	}
 
 	// Reactive conversion - triggers whenever input changes
-	$: if (isClient && marked && DOMPurify && turndownService && (inputText || inputFormat || outputFormat)) {
+	$: if (isClient && marked && DOMPurify && turndownService && Asciidoctor && (inputText || inputFormat || outputFormat)) {
 		convert();
 	}
 </script>
 
 <svelte:head>
 	<title>Converticle - Free Online Text Format Converter | Markdown ⇆ HTML ⇆ Slack</title>
-	<meta name="description" content="Convert text between Markdown, HTML, and Slack mrkdwn formats instantly. Free online converter with live preview, copy/paste, and download features. Perfect for developers and content creators." />
-	<meta name="keywords" content="markdown converter, html converter, slack mrkdwn, text format converter, markdown to html, html to markdown, online converter, free tool" />
+	<meta name="description" content="Convert text between Markdown, HTML, AsciiDoc, and Slack mrkdwn formats instantly. Free online converter with live preview, copy/paste, and download features. Perfect for developers and content creators." />
+	<meta name="keywords" content="markdown converter, html converter, asciidoc converter, slack mrkdwn, text format converter, markdown to html, html to markdown, asciidoc to html, online converter, free tool" />
 	<meta name="author" content="Converticle" />
 	<meta name="robots" content="index, follow" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -172,7 +219,7 @@
 	<meta property="og:type" content="website" />
 	<meta property="og:url" content="https://converticle.com" />
 	<meta property="og:title" content="Converticle - Free Online Text Format Converter" />
-	<meta property="og:description" content="Convert text between Markdown, HTML, and Slack mrkdwn formats instantly. Free online converter with live preview and download features." />
+	<meta property="og:description" content="Convert text between Markdown, HTML, AsciiDoc, and Slack mrkdwn formats instantly. Free online converter with live preview and download features." />
 	<meta property="og:image" content="https://converticle.com/og-image.png" />
 	<meta property="og:image:width" content="1200" />
 	<meta property="og:image:height" content="630" />
@@ -182,7 +229,7 @@
 	<meta property="twitter:card" content="summary_large_image" />
 	<meta property="twitter:url" content="https://converticle.com" />
 	<meta property="twitter:title" content="Converticle - Free Online Text Format Converter" />
-	<meta property="twitter:description" content="Convert text between Markdown, HTML, and Slack mrkdwn formats instantly. Free online converter with live preview." />
+	<meta property="twitter:description" content="Convert text between Markdown, HTML, AsciiDoc, and Slack mrkdwn formats instantly. Free online converter with live preview." />
 	<meta property="twitter:image" content="https://converticle.com/og-image.png" />
 	
 	<!-- Additional SEO -->
@@ -198,7 +245,7 @@
 			"@context": "https://schema.org",
 			"@type": "WebApplication",
 			"name": "Converticle",
-			"description": "Convert text between Markdown, HTML, and Slack mrkdwn formats instantly",
+			"description": "Convert text between Markdown, HTML, AsciiDoc, and Slack mrkdwn formats instantly",
 			"url": "https://converticle.com",
 			"applicationCategory": "DeveloperApplication",
 			"operatingSystem": "Any",
@@ -210,6 +257,7 @@
 			"featureList": [
 				"Convert Markdown to HTML",
 				"Convert HTML to Markdown", 
+				"Convert AsciiDoc to HTML",
 				"Convert to/from Slack mrkdwn format",
 				"Live preview",
 				"Copy to clipboard",
@@ -226,7 +274,7 @@
 			<h1 aria-label="Converticle - Text Format Converter">
 				<span class="logo">🔁</span> Converticle
 			</h1>
-			<p class="tagline">Convert between Markdown, HTML, and Slack mrkdwn formats</p>
+			<p class="tagline">Convert between Markdown, HTML, AsciiDoc, and Slack mrkdwn formats</p>
 		</div>
 		<div class="header-actions">
 			<button class="ghost" on:click={() => toggleTheme()} aria-label="Toggle color theme" title="Toggle light / dark">{theme === 'light' ? '🌙' : '☀️'}</button>
@@ -245,6 +293,7 @@
 					<option value="markdown">Markdown</option>
 					<option value="html">HTML</option>
 					<option value="mrkdwn">Slack mrkdwn</option>
+					<option value="asciidoc">AsciiDoc</option>
 					</select>
 				</div>
 			</div>
@@ -280,6 +329,7 @@
 							<option value="markdown">Markdown</option>
 							<option value="html">HTML</option>
 							<option value="mrkdwn">Slack mrkdwn</option>
+							<option value="asciidoc">AsciiDoc</option>
 						</select>
 					</div>
 				</div>
@@ -295,6 +345,8 @@
 					<div class="preview markdown" aria-label="Rendered Markdown preview">{@html DOMPurify?.sanitize(marked?.parse(outputText) || '')}</div>
 				{:else if showPreview && outputFormat === 'mrkdwn'}
 					<div class="preview" aria-label="Rendered mrkdwn preview"><pre>{outputText}</pre></div>
+				{:else if showPreview && outputFormat === 'asciidoc'}
+					<div class="preview" aria-label="Rendered AsciiDoc preview">{@html DOMPurify?.sanitize(Asciidoctor?.convert(outputText) || '')}</div>
 				{:else}
 					<textarea readonly bind:value={outputText} class="text-area output code" aria-label="Output text (raw)"></textarea>
 				{/if}
@@ -311,15 +363,16 @@
 	<footer class="app-footer">
 		<section class="feature-description">
 			<h2>About Converticle</h2>
-			<p>A free converter for Markdown, HTML, and mrkdwn (Slack) formats with live preview.</p>
+			<p>A free converter for Markdown, HTML, AsciiDoc, and mrkdwn (Slack) formats with live preview.</p>
 			
 			<div class="format-links">
 				<span class="docs-label">Format Docs:</span>
-				<span class="docs-links">
-					<strong>Markdown</strong> <a href="https://www.markdownguide.org/" target="_blank" rel="noopener">Guide</a> <a href="https://spec.commonmark.org/" target="_blank" rel="noopener">Spec</a>
-					• <strong>HTML</strong> <a href="https://developer.mozilla.org/en-US/docs/Web/HTML" target="_blank" rel="noopener">MDN</a> <a href="https://html.spec.whatwg.org/" target="_blank" rel="noopener">Standard</a>
-					• <strong>Slack mrkdwn</strong> <a href="https://api.slack.com/reference/surfaces/formatting" target="_blank" rel="noopener">Formatting</a> <a href="https://slack.com/help/articles/202288908-Format-your-messages" target="_blank" rel="noopener">Help</a>
-				</span>
+				<div class="docs-links">
+					<span><strong>Markdown</strong> <a href="https://www.markdownguide.org/" target="_blank" rel="noopener">Guide</a> <a href="https://spec.commonmark.org/" target="_blank" rel="noopener">Spec</a></span> <span class="separator">|</span> 
+					<span><strong>HTML</strong> <a href="https://developer.mozilla.org/en-US/docs/Web/HTML" target="_blank" rel="noopener">MDN</a> <a href="https://html.spec.whatwg.org/" target="_blank" rel="noopener">Standard</a></span> <span class="separator">|</span> 
+					<span><strong>AsciiDoc</strong> <a href="https://asciidoc.org/" target="_blank" rel="noopener">Syntax</a> <a href="https://docs.asciidoctor.org/" target="_blank" rel="noopener">Docs</a></span> <span class="separator">|</span> 
+					<span><strong>Slack mrkdwn</strong> <a href="https://api.slack.com/reference/surfaces/formatting" target="_blank" rel="noopener">Formatting</a> <a href="https://slack.com/help/articles/202288908-Format-your-messages" target="_blank" rel="noopener">Help</a></span>
+				</div>
 			</div>
 		</section>
 	</footer>
@@ -424,11 +477,20 @@
 	.feature-description h2 { font-size: 1.2rem; margin-bottom: 0.5rem; color: var(--text-primary); font-weight: 600; }
 	.feature-description p { color: var(--text-secondary); line-height: 1.4; font-size: 0.85rem; }
 	
-	.format-links { margin-top: 1rem; font-size: 0.75rem; color: var(--text-secondary); }
-	.docs-label { font-weight: 600; margin-right: 0.5rem; }
-	.docs-links strong { color: var(--text-primary); font-weight: 600; margin-right: 0.25rem; }
-	.docs-links a { color: var(--text-primary); text-decoration: underline; margin-right: 0.5rem; }
+	.format-links { margin-top: 1rem; font-size: 0.72rem; color: var(--text-secondary); line-height: 1.6; }
+	.docs-label { font-weight: 600; margin-right: 0.5rem; display: block; margin-bottom: 0.25rem; }
+	.docs-links { display: block; }
+	.docs-links span { white-space: nowrap; }
+	.docs-links strong { color: var(--text-primary); font-weight: 600; margin-right: 0.35rem; }
+	.docs-links a { color: var(--text-primary); text-decoration: underline; margin-right: 0.6rem; }
 	.docs-links a:hover { opacity: 0.8; }
+	.docs-links .separator { margin: 0 0.3rem; color: var(--text-secondary); }
+	
+	@media (max-width: 700px) { 
+		.format-links { font-size: 0.7rem; }
+		.docs-links { word-break: break-word; }
+		.docs-links span { white-space: normal; }
+	}
 
 	@media (max-width: 900px) { .converter { grid-template-columns:1fr; } .conversion-controls { order:-1; } }
 	@media (max-width: 600px) { .branding h1 { font-size:1.6rem; } .tagline { display:none; } }
