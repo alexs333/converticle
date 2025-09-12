@@ -184,6 +184,14 @@
 		announce('Download started');
 	}
 
+	function emailText() {
+		const subject = `Converted ${inputFormat} to ${outputFormat}`;
+		const body = encodeURIComponent(outputText);
+		const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${body}`;
+		window.location.href = mailtoLink;
+		announce('Email client opened');
+	}
+
 	function toggleTheme(announceChange = true) {
 		if (!browser) return;
 		theme = theme === 'light' ? 'dark' : 'light';
@@ -354,6 +362,7 @@
 					<button on:click={copyToClipboard} class="action-button" class:copied={copied} title="Copy to clipboard" aria-label="Copy output to clipboard">
 						<span>{#if copied}✓{:else}📋{/if}</span>
 					</button>
+					<button on:click={emailText} class="action-button" title="Email text" aria-label="Email output">📧</button>
 					<button on:click={downloadFile} class="action-button" title="Download file" aria-label="Download output">💾</button>
 				</div>
 			</div>
